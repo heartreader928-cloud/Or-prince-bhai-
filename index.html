@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prince ❤️ Pari</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+
+/* BODY */
+body{
+height:100vh;
+overflow:hidden;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fcb69f);
+}
+
+/* COMMON PAGE */
+.page{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
+padding:20px;
+}
+
+h1{font-size:2.7rem;margin-bottom:30px}
+p{font-size:1.3rem}
+
+/* BUTTONS */
+button{
+padding:18px 45px;
+font-size:1.5rem;
+border:none;
+border-radius:40px;
+margin:20px;
+cursor:pointer;
+transition:0.2s;
+}
+
+#yesBtn{background:#ff4d6d;color:white;}
+#noBtn{background:#555;color:white;}
+
+/* LOADING */
+.loader{
+width:70px;height:70px;
+border:6px solid #ffffff55;
+border-top:6px solid #ff4d6d;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-top:20px;
+}
+
+.teddy{font-size:70px;margin-bottom:15px}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* HEARTS & STARS */
+.heart,.star{
+position:absolute;
+font-size:28px;
+animation:float 5s linear infinite;
+pointer-events:none;
+}
+.heart{color:#ff4d6d;}
+.star{color:#fffacd;}
+
+@keyframes float{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-300px);opacity:0}
+}
+
+/* FIREWORK CANVAS */
+#fireworks{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page">
+<h1>Prince ❤️ Pari<br>They will marry or not?</h1>
+<div>
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
+</div>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="page" style="display:none;background:linear-gradient(135deg,#ffd1ff,#ffafbd);">
+<div class="teddy">🧸</div>
+<p>Loading love...</p>
+<div class="loader"></div>
+</div>
+
+<!-- FINAL PAGE -->
+<div id="final" class="page" style="display:none;background:linear-gradient(135deg,#fad0c4,#ffd1ff);">
+
+<canvas id="fireworks"></canvas>
+
+<h1>💖 Congratulations 💖</h1>
+
+<p>
+Dono saath me khush rahoge ❤️<br><br>
+Dono ki shaadi ho jayegi 💍<br><br>
+Prince tu bohot acha ladka hai 😊<br><br>
+But bas mere bare me mat janne ka try kar,<br>
+better hoga 😄<br><br>
+Best of luck bro for your life ✨
+</p>
+
+</div>
+
+<script>
+const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
+const page1=document.getElementById("page1");
+const loading=document.getElementById("loading");
+const finalPage=document.getElementById("final");
+
+/* YES grows fast */
+let scale=1;
+noBtn.onclick=()=>{
+scale*=1.25;
+yesBtn.style.transform=`scale(${scale})`;
+}
+
+/* hearts & stars */
+function deco(){
+const d=document.createElement("div");
+const type=Math.random()<0.5?'heart':'star';
+d.className=type;
+d.innerText=type==='heart'?'❤️':'⭐';
+d.style.left=Math.random()*100+"vw";
+d.style.bottom="0";
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),5000);
+}
+
+/* FIREWORKS */
+function startFireworks(){
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+function createFirework(){
+let x=Math.random()*canvas.width;
+let y=Math.random()*canvas.height/2;
+
+for(let i=0;i<40;i++){
+particles.push({
+x:x,
+y:y,
+dx:(Math.random()-0.5)*6,
+dy:(Math.random()-0.5)*6,
+life:60
+});
+}
+}
+
+function animate(){
+ctx.fillStyle="rgba(0,0,0,0.15)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+particles.forEach((p,i)=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,2,0,Math.PI*2);
+ctx.fillStyle="white";
+ctx.fill();
+
+p.x+=p.dx;
+p.y+=p.dy;
+p.life--;
+
+if(p.life<=0) particles.splice(i,1);
+});
+
+requestAnimationFrame(animate);
+}
+
+setInterval(createFirework,800);
+animate();
+}
+
+/* YES click flow */
+yesBtn.onclick=()=>{
+page1.style.display="none";
+loading.style.display="flex";
+
+setTimeout(()=>{
+loading.style.display="none";
+finalPage.style.display="flex";
+
+setInterval(deco,250);
+startFireworks();   // 🎆 start fireworks
+
+},5000);
+}
+</script>
+
+</body>
+</html>
